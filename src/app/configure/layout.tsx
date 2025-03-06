@@ -1,4 +1,5 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import Steps from "@/components/Steps";
 import React from "react";
 
 export default function ConfigureLayout({
@@ -8,6 +9,7 @@ export default function ConfigureLayout({
 }) {
   return (
     <MaxWidthWrapper className="flex-1 flex flex-col">
+      <Steps />
       {children}
     </MaxWidthWrapper>
   );
