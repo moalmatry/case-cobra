@@ -54,7 +54,7 @@ export const MODELS = {
 } as const;
 
 export const MATERIALS = {
-  name: "materials",
+  name: "material",
   options: [
     {
       label: "Silicone",
@@ -88,4 +88,4 @@ export const FINISHES = {
     },
   ],
 } as const;
-// NOTE: i stopped on 05:00 at the video the next step is to add material label
+// NOTE: i stopped on 05:00 at the video the next step is to add material label (at design page look for HERE)

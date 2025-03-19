@@ -1,14 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import NextImage from "next/image";
 import { AspectRatio } from "../ui/aspect-ratio";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { Rnd } from "react-rnd";
 import HandleComponent from "./components/HandleComponent";
 import { ScrollArea } from "../ui/scroll-area";
-import { Radio, RadioGroup } from "@headlessui/react";
-import { COLORS, MODELS } from "@/validators/option-validator";
-import { Label } from "../ui/label";
+import { Description, Radio, RadioGroup } from "@headlessui/react";
+import {
+  COLORS,
+  FINISHES,
+  MATERIALS,
+  MODELS,
+} from "@/validators/option-validator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
+import { Label } from "../ui/label";
+import { BASE_PRICE } from "@/config/rpoduct";
 interface DesignConfiguratorProps {
   configId: string;
   imageUrl: string;
@@ -31,9 +37,13 @@ const DesignConfigurator = ({
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number];
     model: (typeof MODELS.options)[number];
+    material: (typeof MATERIALS.options)[number];
+    finish: (typeof FINISHES.options)[number];
   }>({
     color: COLORS[0],
     model: MODELS.options[1],
+    finish: FINISHES.options[0],
+    material: MATERIALS.options[0],
   });
   return (
     <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
@@ -86,7 +96,7 @@ const DesignConfigurator = ({
         </Rnd>
       </div>
       {/* Right side */}
-      <div className="h-[37.5rem] flex flex-col bg-white">
+      <div className="h-[37.5rem] w-full col-span-full lg:col-span-1 flex flex-col bg-white">
         <ScrollArea className="relative flex-1 overflow-auto">
           <div
             aria-hidden="true"
@@ -181,10 +191,95 @@ const DesignConfigurator = ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
+                {[MATERIALS, FINISHES].map(
+                  ({ name, options: selectableOptions }) => (
+                    <RadioGroup
+                      key={name}
+                      value={options[name]}
+                      onChange={(value) => {
+                        setOptions((prev) => ({
+                          ...prev,
+                          //  name: material or finish
+                          [name]: value,
+                        }));
+                      }}
+                    >
+                      <Label>
+                        {name.slice(0, 1).toUpperCase() + name.slice(1)}
+                      </Label>
+                      <div className="mt-3 space-y-4">
+                        {selectableOptions.map((option) => (
+                          <Radio
+                            key={option.value}
+                            value={option}
+                            className={({ checked, focus }) =>
+                              cn(
+                                "relative block cursor-pointer rounded-lg bg-white px-6 py-4 shadow-sm border-2 border-zinc-200 focus:outline-none ring-0 focus:ring-0 outline-none sm:flex sm:justify-between",
+                                {
+                                  "border-primary": focus || checked,
+                                }
+                              )
+                            }
+                          >
+                            <span className="flex items-center">
+                              <span className="flex flex-col text-sm">
+                                <Label
+                                  // as="span"
+                                  asChild
+                                >
+                                  <Fragment key={option.label}>
+                                    <span className="font-medium text-gray-900">
+                                      {option.label}
+                                    </span>
+                                    {option.description ? (
+                                      <Description
+                                        className="text-gray-500"
+                                        as="span"
+                                      >
+                                        <span className="block sm:inline">
+                                          {option.description}
+                                        </span>
+                                      </Description>
+                                    ) : null}
+                                  </Fragment>
+                                </Label>
+                              </span>
+                            </span>
+                            <Description
+                              as="span"
+                              className="mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right"
+                            >
+                              <span className="font-medium text-gray-900">
+                                {formatPrice(option.price / 100)}
+                              </span>
+                            </Description>
+                          </Radio>
+                        ))}
+                      </div>
+                    </RadioGroup>
+                  )
+                )}
               </div>
             </div>
           </div>
         </ScrollArea>
+        <div className="w-full px-8 h-16 bg-white">
+          <div className="h-px w-full bg-zinc-200" />
+          <div className="w-full h-full flex justify-end items-center">
+            <div className="w-full flex gap-6 items-center justify-between">
+              <p className="font-medium whitespace-nowrap">
+                {formatPrice(
+                  (BASE_PRICE + options.finish.price + options.material.price) /
+                    100
+                )}
+              </p>
+              <Button size="sm" className="w-1/2 md:w-full ">
+                Continue
+                <ArrowRight className="h-4 w-4 ml-1.5 inline " />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

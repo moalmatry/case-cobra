@@ -19,3 +19,11 @@ export const splitArray = <T>(array: Array<T>, numberParts: number) => {
 
   return result;
 };
+
+export const formatPrice = (price: number) => {
+  const formatter = new Intl.NumberFormat("en-Us", {
+    style: "currency",
+    currency: "USD",
+  });
+  return formatter.format(price);
+};
