@@ -25,6 +25,9 @@ import { Label } from "../ui/label";
 import { BASE_PRICE } from "@/config/rpoduct";
 import { useUploadThing } from "@/lib/uploadthing";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { saveConfig as _saveConfig, SaveConfigArgs } from "./actions";
+import { useRouter } from "next/navigation";
 interface DesignConfiguratorProps {
   configId: string;
   imageUrl: string;
@@ -36,6 +39,20 @@ const DesignConfigurator = ({
   imageUrl,
   imageDimensions,
 }: DesignConfiguratorProps) => {
+  const router = useRouter();
+  const { mutate: saveConfig } = useMutation({
+    mutationKey: ["save-config"],
+    mutationFn: async (args: SaveConfigArgs) => {
+      await Promise.all([saveConfiguration(), _saveConfig(args)]);
+    },
+    onError: () => {
+      toast.error("something went wrong while saving your configuration");
+    },
+    onSuccess: () => {
+      toast.success("Configuration saved successfully");
+      router.push(`/configure/preview?id=${configId}`);
+    },
+  });
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number];
     model: (typeof MODELS.options)[number];
@@ -93,6 +110,7 @@ const DesignConfigurator = ({
       const userImage = new Image();
       userImage.crossOrigin = "anonymous";
       userImage.src = imageUrl;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       await new Promise((resolve, _) => (userImage.onload = resolve));
       ctx?.drawImage(
         userImage,
@@ -365,10 +383,16 @@ const DesignConfigurator = ({
               </p>
               <Button
                 onClick={() => {
-                  saveConfiguration();
+                  saveConfig({
+                    configId,
+                    color: options.color.value,
+                    finish: options.finish.value,
+                    material: options.material.value,
+                    model: options.model.value,
+                  });
                 }}
                 size="sm"
-                className="w-1/2 md:w-full "
+                className="w-1/2 md:w-full cursor-pointer"
               >
                 Continue
                 <ArrowRight className="h-4 w-4 ml-1.5 inline " />
