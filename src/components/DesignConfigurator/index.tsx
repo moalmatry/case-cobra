@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import NextImage from "next/image";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { cn, formatPrice } from "@/lib/utils";
@@ -23,6 +23,8 @@ import { Button } from "../ui/button";
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { Label } from "../ui/label";
 import { BASE_PRICE } from "@/config/rpoduct";
+import { useUploadThing } from "@/lib/uploadthing";
+import { toast } from "sonner";
 interface DesignConfiguratorProps {
   configId: string;
   imageUrl: string;
@@ -45,11 +47,88 @@ const DesignConfigurator = ({
     finish: FINISHES.options[0],
     material: MATERIALS.options[0],
   });
+  const [renderedDimension, setRenderedDimension] = useState({
+    width: imageDimensions.width / 4,
+    height: imageDimensions.height / 4,
+  });
+  const [renderedPosition, setRenderedPosition] = useState({
+    x: 150,
+    y: 205,
+  });
+
+  const phoneCaseRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { startUpload } = useUploadThing("imageUploader");
+
+  const base64ToBlob = (base64Data: string, mimeType: string) => {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    return new Blob([byteArray], { type: mimeType });
+  };
+  const saveConfiguration = async () => {
+    // NOTE: To save the image that user uploads we need to take the dimensions but the dimensions start at the beginning of user's scree so we calculate it from the beginning of cover image the create new image and draw it to a canvas
+    try {
+      const {
+        left: caseLeft,
+        top: caseTop,
+        width,
+        height,
+      } = phoneCaseRef.current!.getBoundingClientRect();
+      const { left: containerLeft, top: containerTop } =
+        containerRef.current!.getBoundingClientRect();
+      const leftOffset = caseLeft - containerLeft;
+      const topOffset = caseTop - containerTop;
+
+      const actualX = renderedPosition.x - leftOffset;
+      const actualY = renderedPosition.y - topOffset;
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      const userImage = new Image();
+      userImage.crossOrigin = "anonymous";
+      userImage.src = imageUrl;
+      await new Promise((resolve, _) => (userImage.onload = resolve));
+      ctx?.drawImage(
+        userImage,
+        actualX,
+        actualY,
+        renderedDimension.width,
+        renderedDimension.height
+      );
+      // NOTE: canvas is a html element so we need to convert it to image to export it
+      const base64 = canvas.toDataURL();
+      const base64Data = base64.split(",")[1];
+      const blob = base64ToBlob(base64Data, "image/png");
+      const file = new File([blob], "filename.png", {
+        type: "image/png",
+      });
+
+      await startUpload([file], {
+        configId,
+      });
+    } catch (error) {
+      toast.error(
+        "There was an problem while saving your config please try again"
+      );
+      console.log(error);
+    }
+  };
+
   return (
     <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
-      <div className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+      <div
+        ref={containerRef}
+        className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      >
         <div className="relative w-60 opacity-100 pointer-events-none aspect-[896/1831]">
           <AspectRatio
+            ref={phoneCaseRef}
             ratio={896 / 1831}
             className="pointer-events-none relative z-50 aspect-[896/1831] w-full"
           >
@@ -75,6 +154,17 @@ const DesignConfigurator = ({
             y: 205,
             height: imageDimensions.height / 4,
             width: imageDimensions.width / 4,
+          }}
+          onResizeStop={(_, __, ref, ___, { x, y }) => {
+            setRenderedDimension({
+              height: parseInt(ref.style.height.slice(0, -2)),
+              width: parseInt(ref.style.width.slice(0, -2)),
+            });
+            setRenderedPosition({ x, y });
+          }}
+          onDragStop={(_, data) => {
+            const { x, y } = data;
+            setRenderedPosition({ x, y });
           }}
           className="absolute z-20 border-[3px] border-primary"
           lockAspectRatio
@@ -273,7 +363,13 @@ const DesignConfigurator = ({
                     100
                 )}
               </p>
-              <Button size="sm" className="w-1/2 md:w-full ">
+              <Button
+                onClick={() => {
+                  saveConfiguration();
+                }}
+                size="sm"
+                className="w-1/2 md:w-full "
+              >
                 Continue
                 <ArrowRight className="h-4 w-4 ml-1.5 inline " />
               </Button>
