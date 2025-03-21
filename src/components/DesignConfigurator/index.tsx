@@ -22,7 +22,7 @@ import {
 import { Button } from "../ui/button";
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { Label } from "../ui/label";
-import { BASE_PRICE } from "@/config/rpoduct";
+import { BASE_PRICE } from "@/config/product";
 import { useUploadThing } from "@/lib/uploadthing";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";

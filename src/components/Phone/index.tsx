@@ -24,7 +24,11 @@ const Phone = ({ className, dark = false, imgSrc, ...props }: PhoneProps) => {
         alt="phone image"
       />
       <div className="absolute -z-10 inset-0">
-        <img alt="overlaying phone" className="object-cover" src={imgSrc} />
+        <img
+          alt="overlaying phone"
+          className="object-cover min-w-full min-h-full"
+          src={imgSrc}
+        />
       </div>
     </div>
   );
