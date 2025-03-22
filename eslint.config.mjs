@@ -14,7 +14,7 @@ const eslintConfig = [
   {
     rules: {
       "@typescript-eslint/no-unused-vars": "warn",
-      "no-vars": "off",
+      "no-unused-vars": "off",
     },
   },
 ];
