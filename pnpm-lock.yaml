@@ -16,7 +16,7 @@ importers:
         version: 2.5.3(@babel/core@7.26.9)(next@15.2.0(@babel/core@7.26.9)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@prisma/client':
         specifier: ^6.4.1
-        version: 6.4.1(typescript@5.8.2)
+        version: 6.4.1(prisma@4.16.2)(typescript@5.8.2)
       '@radix-ui/react-aspect-ratio':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -120,6 +120,9 @@ importers:
       eslint-config-next:
         specifier: 15.2.0
         version: 15.2.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.8.2)
+      prisma:
+        specifier: ^4.0.0
+        version: 4.16.2
       tailwindcss:
         specifier: ^4
         version: 4.0.9
@@ -932,6 +935,9 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  '@prisma/engines@4.16.2':
+    resolution: {integrity: sha512-vx1nxVvN4QeT/cepQce68deh/Turxy5Mr+4L4zClFuK1GlxN3+ivxfuv+ej/gvidWn1cE1uAhW7ALLNlYbRUAw==}
 
   '@radix-ui/number@1.1.0':
     resolution: {integrity: sha512-V3gRzhVNU1ldS5XhAPTom1fOIo4ccrjjJgmE+LI2h/WaFpHmx0MQApT+KZHnx8abG6Avtfcz4WoEciMnpFT3HQ==}
@@ -2545,6 +2551,11 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prisma@4.16.2:
+    resolution: {integrity: sha512-SYCsBvDf0/7XSJyf2cHTLjLeTLVXYfqp7pG5eEVafFLeT0u/hLFz/9W196nDRGUOo1JfPatAEb+uEnTQImQC1g==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
 
@@ -3925,9 +3936,12 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@prisma/client@6.4.1(typescript@5.8.2)':
+  '@prisma/client@6.4.1(prisma@4.16.2)(typescript@5.8.2)':
     optionalDependencies:
+      prisma: 4.16.2
       typescript: 5.8.2
+
+  '@prisma/engines@4.16.2': {}
 
   '@radix-ui/number@1.1.0': {}
 
@@ -5668,6 +5682,10 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prisma@4.16.2:
+    dependencies:
+      '@prisma/engines': 4.16.2
 
   prop-types@15.8.1:
     dependencies:
