@@ -4,13 +4,12 @@ import { notFound } from "next/navigation";
 import React from "react";
 
 interface PageProps {
-  searchParams: {
-    [key: string]: string | string[] | undefined;
-  };
+  // Ensuring searchParams is a Promise resolves the type error.
+  searchParams: Promise<{ id?: string }>;
 }
 
 export default async function Design({ searchParams }: PageProps) {
-  const { id } = searchParams;
+  const { id } = await Promise.resolve(searchParams);
   if (!id || typeof id !== "string") return notFound();
   const configuration = await db.configuration.findUnique({
     where: { id },
@@ -21,7 +20,6 @@ export default async function Design({ searchParams }: PageProps) {
   const { imageUrl, width, height } = configuration;
   return (
     <DesignConfigurator
-      key={1}
       configId={configuration.id}
       imageDimensions={{ height, width }}
       imageUrl={imageUrl}

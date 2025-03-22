@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import NextImage from "next/image";
 import { AspectRatio } from "../ui/aspect-ratio";
 import { cn, formatPrice } from "@/lib/utils";
@@ -335,7 +335,7 @@ const DesignConfigurator = ({
                                   // as="span"
                                   asChild
                                 >
-                                  <Fragment key={option.label}>
+                                  <div key={option.label}>
                                     <span className="font-medium text-gray-900">
                                       {option.label}
                                     </span>
@@ -349,7 +349,7 @@ const DesignConfigurator = ({
                                         </span>
                                       </Description>
                                     ) : null}
-                                  </Fragment>
+                                  </div>
                                 </Label>
                               </span>
                             </span>
