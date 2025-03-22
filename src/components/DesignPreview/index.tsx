@@ -8,8 +8,13 @@ import { useEffect, useState } from "react";
 import Confetti from "react-dom-confetti";
 import Phone from "../Phone";
 import { Button } from "../ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { createCheckoutSession } from "./actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
+  const router = useRouter();
   const [showConfetti, setShowConfetti] = useState(false);
   const { color, croppedImageUrl, model, finish, material } = configuration;
   const tw = COLORS.find(
@@ -22,6 +27,18 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   if (material === "polycarbonate")
     totalPrice += PRODUCT_PRICES.material.polycarbonate;
   if (finish === "textured") totalPrice += PRODUCT_PRICES.finish.textured;
+
+  const { mutate: createPaymentSession } = useMutation({
+    mutationKey: ["get-checkout-session"],
+    mutationFn: createCheckoutSession,
+    onSuccess: ({ url }) => {
+      if (url) router.push(url);
+      else throw new Error("Failed to create checkout session");
+    },
+    onError: (error) => {
+      toast.error("Failed to create checkout session");
+    },
+  });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setShowConfetti(true));
   return (
@@ -79,14 +96,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                     {formatPrice(BASE_PRICE / 100)}
                   </p>
                 </div>
-                {finish === "textured" ? (
-                  <div className="flex items-center justify-between py-1 mt-2">
-                    <p className="text-gray-600">Textured finish </p>
-                    <p className="font-medium text-gray-900">
-                      {formatPrice(PRODUCT_PRICES.finish.textured / 100)}
-                    </p>
-                  </div>
-                ) : null}
 
                 {finish === "textured" ? (
                   <div className="flex items-center justify-between py-1 mt-2">
@@ -117,7 +126,12 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
               </div>
             </div>
             <div className="mt-8 flex justify-end pb-12">
-              <Button className="px-4 sm:px-6 lg:px-8">
+              <Button
+                onClick={() =>
+                  createPaymentSession({ configId: configuration.id })
+                }
+                className="px-4 sm:px-6 lg:px-8 cursor-pointer"
+              >
                 Checkout <ArrowRight className="h-4 w-4 ml-1.5 inline" />
               </Button>
             </div>
