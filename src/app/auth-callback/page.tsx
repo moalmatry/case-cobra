@@ -18,8 +18,11 @@ export default function AuthCallback() {
   useEffect(() => {
     const configurationsId = localStorage.getItem("configurationId");
     if (configurationsId) setConfigId(configurationsId);
-  }, []);
+  });
 
+  console.log("********************************");
+  console.log(configId);
+  console.log("********************************");
   useEffect(() => {
     if (data?.success) {
       if (configId) {
