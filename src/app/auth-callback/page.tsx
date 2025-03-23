@@ -1,11 +1,12 @@
 "use client";
+
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAuthStatus } from "./actions";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-export default function AuthCallback() {
+const Page = () => {
   const [configId, setConfigId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -14,14 +15,13 @@ export default function AuthCallback() {
     if (configurationId) setConfigId(configurationId);
   }, []);
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["auth-callback"],
     queryFn: async () => await getAuthStatus(),
     retry: true,
     retryDelay: 500,
   });
 
-  console.log(data);
   if (data?.success) {
     if (configId) {
       localStorage.removeItem("configurationId");
@@ -31,28 +31,15 @@ export default function AuthCallback() {
     }
   }
 
-  useEffect(() => {
-    if (data?.success) {
-      if (configId) {
-        localStorage.removeItem("configurationId");
-        router.push(`/configure/preview?id=${configId}`);
-      } else {
-        router.push("/");
-      }
-    }
-  }, [data, configId, router]);
-
-  if (isLoading) {
-    return (
-      <div className="w-full mt-24 flex justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
-          <h3 className="font-semibold text-xl">Logging you in...</h3>
-          <p>You will be redirected automatically.</p>
-        </div>
+  return (
+    <div className="w-full mt-24 flex justify-center">
+      <div className="flex flex-col items-center gap-2">
+        <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
+        <h3 className="font-semibold text-xl">Logging you in...</h3>
+        <p>You will be redirected automatically.</p>
       </div>
-    );
-  }
+    </div>
+  );
+};
 
-  return null; // Render nothing if the loading state is false and navigation is happening
-}
+export default Page;
