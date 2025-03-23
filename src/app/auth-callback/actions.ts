@@ -15,6 +15,10 @@ export const getAuthStatus = async () => {
       id: user.id,
     },
   });
+
+  console.log("********************************");
+  console.log(user.id);
+  console.log("********************************");
   if (!existingUser) {
     await db.user.create({
       data: {

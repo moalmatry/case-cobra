@@ -20,9 +20,6 @@ export default function AuthCallback() {
     if (configurationsId) setConfigId(configurationsId);
   });
 
-  console.log("********************************");
-  console.log(configId);
-  console.log("********************************");
   useEffect(() => {
     if (data?.success) {
       if (configId) {
