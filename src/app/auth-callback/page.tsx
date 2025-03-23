@@ -8,6 +8,12 @@ import { Loader2 } from "lucide-react";
 export default function AuthCallback() {
   const [configId, setConfigId] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const configurationId = localStorage.getItem("configurationId");
+    if (configurationId) setConfigId(configurationId);
+  }, []);
+
   const { data, isLoading } = useQuery({
     queryKey: ["auth-callback"],
     queryFn: async () => await getAuthStatus(),
@@ -15,10 +21,14 @@ export default function AuthCallback() {
     retryDelay: 500,
   });
 
-  useEffect(() => {
-    const configurationsId = localStorage.getItem("configurationId");
-    if (configurationsId) setConfigId(configurationsId);
-  });
+  if (data?.success) {
+    if (configId) {
+      localStorage.removeItem("configurationId");
+      router.push(`/configure/preview?id=${configId}`);
+    } else {
+      router.push("/");
+    }
+  }
 
   useEffect(() => {
     if (data?.success) {
