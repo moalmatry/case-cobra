@@ -7,9 +7,6 @@ export const getAuthStatus = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  console.log("*********************************");
-  console.log(user);
-  console.log("*********************************");
   if (!user?.id || !user.email) {
     throw new Error("Invalid user data");
   }

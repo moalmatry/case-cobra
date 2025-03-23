@@ -21,6 +21,7 @@ export default function AuthCallback() {
     retryDelay: 500,
   });
 
+  console.log(data);
   if (data?.success) {
     if (configId) {
       localStorage.removeItem("configurationId");
