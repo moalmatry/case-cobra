@@ -5,6 +5,7 @@ import ReactQueryProvider from "@/providers/react-query-provider";
 import type { Metadata } from "next";
 import { Recursive } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/providers/auth-provider";
 const geistSans = Recursive({
   variable: "--font-recursive-sans",
   subsets: ["latin"],
@@ -27,16 +28,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ReactQueryProvider>
-        <body className={`${geistSans.variable}  antialiased`}>
-          <Navbar />
-          <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)] grainy-light">
-            <div className="flex-1 flex flex-col h-full">{children}</div>
-            <Footer />
-          </main>
-          <Toaster position="top-right" />
-        </body>
-      </ReactQueryProvider>
+      <AuthProvider>
+        <ReactQueryProvider>
+          <body className={`${geistSans.variable}  antialiased`}>
+            <Navbar />
+            <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)] grainy-light">
+              <div className="flex-1 flex flex-col h-full">{children}</div>
+              <Footer />
+            </main>
+            <Toaster position="top-right" />
+          </body>
+        </ReactQueryProvider>
+      </AuthProvider>
     </html>
   );
 }
