@@ -27,19 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable}  antialiased`}>
-        <Navbar />
-        <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)] grainy-light">
-          <div className="flex-1 flex flex-col h-full">
-            <AuthProvider>
+    <AuthProvider>
+      <html lang="en">
+        <body className={`${geistSans.variable}  antialiased`}>
+          <Navbar />
+          <main className="flex flex-col min-h-[calc(100vh-3.5rem-1px)] grainy-light">
+            <div className="flex-1 flex flex-col h-full">
               <ReactQueryProvider>{children}</ReactQueryProvider>
-            </AuthProvider>
-          </div>
-          <Footer />
-        </main>
-        <Toaster position="top-right" />
-      </body>
-    </html>
+            </div>
+            <Footer />
+          </main>
+          <Toaster position="top-right" />
+        </body>
+      </html>
+    </AuthProvider>
   );
 }

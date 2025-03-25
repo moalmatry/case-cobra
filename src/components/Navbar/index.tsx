@@ -4,6 +4,11 @@ import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import {
+  RegisterLink,
+  LoginLink,
+  LogoutLink,
+} from "@kinde-oss/kinde-auth-nextjs/components";
 
 const Navbar = async () => {
   const { getUser } = getKindeServerSession();
@@ -21,26 +26,24 @@ const Navbar = async () => {
           <div className="h-full flex items-center space-x-4">
             {user ? (
               <>
-                <Link
-                  href="/api/auth/logout"
+                <LogoutLink
                   className={buttonVariants({
                     size: "sm",
                     variant: "ghost",
                   })}
                 >
                   Sign out
-                </Link>
+                </LogoutLink>
 
                 {isAdmin && (
-                  <Link
-                    href="/api/auth/logout"
+                  <LogoutLink
                     className={buttonVariants({
                       size: "sm",
                       variant: "ghost",
                     })}
                   >
                     Dashboard ✨
-                  </Link>
+                  </LogoutLink>
                 )}
                 <Link
                   href="/configure/upload"
@@ -55,24 +58,22 @@ const Navbar = async () => {
               </>
             ) : (
               <>
-                <Link
-                  href="/api/auth/register"
+                <RegisterLink
                   className={buttonVariants({
                     size: "sm",
                     variant: "ghost",
                   })}
                 >
                   Sign up
-                </Link>
-                <Link
-                  href="/api/auth/login"
+                </RegisterLink>
+                <LoginLink
                   className={buttonVariants({
                     size: "sm",
                     variant: "ghost",
                   })}
                 >
                   Login
-                </Link>
+                </LoginLink>
 
                 <div className="h-8 w-px bg-zinc-200 hidden sm:block" />
 
